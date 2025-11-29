@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Validação de Matrícula</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;display:flex;align-items:center;justify-content:center;min-height:100vh;background:#f6f7fb;margin:0}
+    .card{background:#fff;padding:22px;border-radius:10px;box-shadow:0 6px 20px rgba(10,20,40,0.08);width:100%;max-width:720px}
+    h1{font-size:18px;margin:0 0 12px}
+    p.lead{margin:0 0 18px;color:#444}
+    .row{display:flex;gap:8px}
+    input[type="text"]{flex:1;padding:10px 12px;border:1px solid #d7dbe6;border-radius:8px;font-size:15px}
+    button{padding:10px 14px;border-radius:8px;border:0;background:#0b63d6;color:#fff;font-weight:600;cursor:pointer}
+    button:active{transform:translateY(1px)}
+    .result{margin-top:16px;padding:14px;background:#fbfdff;border-radius:8px;border:1px solid #e6eefc;white-space:pre-wrap;font-family:monospace;color:#0b1b3a}
+    .error{color:#9b1b1b;background:#fff1f1;border:1px solid #ffd6d6;padding:10px;border-radius:8px}
+    small.hint{display:block;margin-top:8px;color:#666}
+  </style>
+</head>
+<body>
+  <div class="card" role="main">
+    <h1>Validação de Matrícula</h1>
+    <p class="lead">Digite a matrícula e clique em <strong>Pesquisar</strong>.</p>
+
+    <div class="row">
+      <input id="matricula" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="Digite a matrícula (apenas números)" aria-label="Matrícula">
+      <button id="buscar">Pesquisar</button>
+    </div>
+    <small class="hint">Pressione Enter para pesquisar.</small>
+
+    <div id="saida" class="result" aria-live="polite" style="display:none"></div>
+    <div id="msgErro" class="error" style="display:none"></div>
+  </div>
+
+  <script>
+    (function(){
+      const dados = {
+        "1242023200352": {
+          estudante: "JÚLIO CESAR BORGES SÁVIO",
+          matricula: "1242023200352",
+          curso: "TECNOLOGIA EM GESTÃO DE RH",
+          unidade: "SÃO CARLOS/SP",
+          ato: "NI",
+          duracao: "4Semestres"
+        },
+        "1242023200353": {
+          estudante: "Izabella Borges Camargo Sávio",
+          matricula: "1242023200353",
+          curso: "TECNOLOGIA EM GESTÃO DE RH",
+          unidade: "SÃO CARLOS/SP",
+          ato: "NI",
+          duracao: "4Semestres"
+        }
+      };
+
+      const input = document.getElementById('matricula');
+      const btn = document.getElementById('buscar');
+      const saida = document.getElementById('saida');
+      const msgErro = document.getElementById('msgErro');
+
+      function limparMensagens(){
+        saida.style.display = 'none';
+        msgErro.style.display = 'none';
+        saida.textContent = '';
+        msgErro.textContent = '';
+      }
+
+      function mostrarErro(text){
+        limparMensagens();
+        msgErro.textContent = text;
+        msgErro.style.display = 'block';
+      }
+
+      function pesquisar(){
+        const val = input.value.trim();
+        if(!val){
+          mostrarErro('Digite a matrícula antes de pesquisar.');
+          return;
+        }
+        if(!/^\d+$/.test(val)){
+          mostrarErro('A matrícula deve conter apenas números.');
+          return;
+        }
+
+        const info = dados[val];
+        if(!info){
+          mostrarErro('Matrícula não encontrada ou inválida.');
+          return;
+        }
+
+        const texto = 
+`Estudante: ${info.estudante}
+Matrícula: ${info.matricula}
+Curso: ${info.curso}
+Unidade: ${info.unidade}
+Ato Autorizativo: ${info.ato}
+Duração do Curso: ${info.duracao}`;
+
+        limparMensagens();
+        saida.textContent = texto;
+        saida.style.display = 'block';
+      }
+
+      btn.addEventListener('click', pesquisar);
+      input.addEventListener('keydown', function(e){
+        if(e.key === 'Enter') pesquisar();
+      });
+    })();
+  </script>
+</body>
+</html>
